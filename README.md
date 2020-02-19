@@ -1,8 +1,4 @@
 **NOTES**
-- Push things only in develop.
-- Validate things before you push.
-- Be meaningful in making commit messages.
-- Don't screw it.
 - composer install
 - cp .env.example.env
 - php artisan key:generate
