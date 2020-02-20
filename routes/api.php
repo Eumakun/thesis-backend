@@ -19,16 +19,15 @@ Route::group([
     Route::post('login', 'AuthController@login');
 });
 Route::group([
-    'prefix' => 'dashboard'
-], function () {
-    Route::get('/', 'SurveyAnswerController@dashboard');
-});
-Route::group([
     'middleware' => 'auth:api'
   ], function() {
       Route::get('logout', 'AuthController@logout');
       Route::get('user', 'AuthController@user');
-    
+      Route::group([
+        'prefix' => 'dashboard'
+    ], function () {
+        Route::get('/', 'SurveyAnswerController@dashboard');
+    });
       Route::group([
         'prefix' => 'survey'
         ], function () {
