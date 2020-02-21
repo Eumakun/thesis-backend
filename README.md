@@ -1,7 +1,7 @@
 **Required Softwares**
 - Git
 - composer global require laravel/installer
-- Xampp
+- Xamp
 
 **NOTES**
 - composer install
