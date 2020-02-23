@@ -99,8 +99,8 @@ class AuthController extends Controller
             'password' => 'required',
             'new_password' => 'different:password',
         ]);
-
-        $user->fill($request->input())->save();
+        $user->password = $request->new_password;
+        $user->update();
         return response()->json([
             'message' => "Successfully updated user password!"
         ], 200);
