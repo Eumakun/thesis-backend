@@ -9,6 +9,6 @@
 - php artisan key:generate
 - php artisan passport:install
 - php artisan passport:keys
-- php artisan migrate
-- php artisan db:seed
+- php artisan migrate - Use if DB is not imported first
+- php artisan db:seed - Use if DB is not imported first
 - php artisan serve
