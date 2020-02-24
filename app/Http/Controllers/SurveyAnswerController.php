@@ -296,22 +296,46 @@ class SurveyAnswerController extends Controller
      *
      * @return [string] message
      */
-    public function dashboard() {
+    public function dashboard(Request $request) {
         $employed = survey_answer::where('employment_status', "employed")
+            ->whereHas("latestEducation", function($q) use($request){
+               $q->when(!empty($request['school_id']) , function ($query) use($request){
+                    return $query->where('school_id', $request['school_id']);
+                });
+            })
             ->count();
         $unemployed = survey_answer::where('employment_status', "unemployed")
+            ->whereHas("latestEducation", function($q) use($request){
+                $q->when(!empty($request['school_id']) , function ($query) use($request){
+                    return $query->where('school_id', $request['school_id']);
+                });
+            })
             ->count();
 
-        $age =  survey_answer::groupBy('age')
+        $age =  survey_answer::groupBy('age')->whereHas("latestEducation", function($q) use($request){
+            $q->when(!empty($request['school_id']) , function ($query) use($request){
+                 return $query->where('school_id', $request['school_id']);
+             });
+         })
         ->get("age");
 
         $unemployedAge = DB::table('survey_answers')
         ->select('age', DB::raw('SUM(case when employment_status = "unemployed" then 1 else 0 end) as unemployed'))
+        ->leftJoin('education_histories','survey_answers.id','=', 'education_histories.survey_id')
+        ->when(!empty($request['school_id']) , function ($query) use($request){
+            return $query->where('school_id', $request['school_id']);
+        })
+        // ->latest('education_histories.created_at')
         ->groupBy('age')
         ->get();
 
         $employedAge = DB::table('survey_answers')
         ->select('age', DB::raw('SUM(case when employment_status = "employed" then 1 else 0 end) as employed'))
+        ->leftJoin('education_histories','survey_answers.id','=', 'education_histories.survey_id')
+        ->when(!empty($request['school_id']) , function ($query) use($request){
+            return $query->where('school_id', $request['school_id']);
+        })
+        // ->latest('education_histories.created_at')
         ->groupBy('age')
         ->get();
 
@@ -323,12 +347,18 @@ class SurveyAnswerController extends Controller
         $unemployedDateGraduated = DB::table('education_histories')
         ->select(DB::raw('year(date_graduated) as year'),DB::raw('SUM(case when employment_status = "unemployed" then 1 else 0 end) as unemployed'))
         ->leftJoin('survey_answers','education_histories.survey_id','=', 'survey_answers.id')
+        ->when(!empty($request['school_id']) , function ($query) use($request){
+            return $query->where('school_id', $request['school_id']);
+        })
         ->groupBy(DB::raw('year(date_graduated)'))
         ->get();
 
         $employedDateGraduated = DB::table('education_histories')
         ->select(DB::raw('year(date_graduated) as year'),DB::raw('SUM(case when employment_status = "employed" then 1 else 0 end) as employed'))
         ->leftJoin('survey_answers','education_histories.survey_id','=', 'survey_answers.id')
+        ->when(!empty($request['school_id']) , function ($query) use($request){
+            return $query->where('school_id', $request['school_id']);
+        })
         ->groupBy(DB::raw('year(date_graduated)'))
         ->get();
 
@@ -337,17 +367,30 @@ class SurveyAnswerController extends Controller
 
         $unemployedGender = DB::table('survey_answers')
         ->select('gender', DB::raw('SUM(case when employment_status = "unemployed" then 1 else 0 end) as unemployed'))
+        ->leftJoin('education_histories','survey_answers.id','=', 'education_histories.survey_id')
+        ->when(!empty($request['school_id']) , function ($query) use($request){
+            return $query->where('school_id', $request['school_id']);
+        })
         ->groupBy('gender')
         ->get();
 
         $employedGender = DB::table('survey_answers')
         ->select('gender', DB::raw('SUM(case when employment_status = "employed" then 1 else 0 end) as employed'))
+        ->leftJoin('education_histories','survey_answers.id','=', 'education_histories.survey_id')
+        ->when(!empty($request['school_id']) , function ($query) use($request){
+            return $query->where('school_id', $request['school_id']);
+        })
         ->groupBy('gender')
         ->get();
         
         $tierlist = survey_answer::with(["latestEmployment", "latestEducation"])
         ->where("employment_status", "employed")
         ->whereHas("latestEmployment")
+        ->whereHas("latestEducation", function($q) use($request){
+            $q->when(!empty($request['school_id']) , function ($query) use($request){
+                 return $query->where('school_id', $request['school_id']);
+             });
+         })
         ->get();
         // return $tierlist;
         $tier1 = 0;
@@ -380,7 +423,12 @@ class SurveyAnswerController extends Controller
                     $tier3++;
             } 
         }
-        $total = survey_answer::count();
+        $total = survey_answer::whereHas("latestEducation", function($q) use($request){
+            $q->when(!empty($request['school_id']) , function ($query) use($request){
+                 return $query->where('school_id', $request['school_id']);
+             });
+         })
+         ->count();
         $dashboard = array(
             'total' => $total,
             'employed' => $employed,
