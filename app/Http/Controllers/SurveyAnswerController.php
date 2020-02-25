@@ -455,7 +455,7 @@ class SurveyAnswerController extends Controller
             "tier2" => $tier2,
             "tier3" => $tier3,
             "tier4" => $tier4,
-            "unclassified" => $total - ($tier1 + $tier2 + $tier3 + $tier4)
+            "unclassified" => $employed - ($tier1 + $tier2 + $tier3 + $tier4)
         );
         return response()->json([
             'message' => "Successfully fetched dashboard data!",
