@@ -389,7 +389,7 @@ class SurveyAnswerController extends Controller
         ->whereHas("latestEducation", function($q) use($request){
             $q->when(!empty($request['school_id']) , function ($query) use($request){
                  return $query->where('school_id', $request['school_id']);
-             });
+             });    
          })
         ->get();
         // return $tierlist;
@@ -455,7 +455,7 @@ class SurveyAnswerController extends Controller
             "tier2" => $tier2,
             "tier3" => $tier3,
             "tier4" => $tier4,
-            "unclassified" => $total - ($tier1 + $tier2 + $tier3 + $tier4)
+            "unclassified" => $employed - ($tier1 + $tier2 + $tier3 + $tier4)
         );
         return response()->json([
             'message' => "Successfully fetched dashboard data!",

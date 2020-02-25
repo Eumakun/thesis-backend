@@ -17,12 +17,12 @@ class survey_answer extends Model
     ];
 
     public function latestEmployment(){
-        return $this->hasOne('App\employment_history', 'survey_id','id')->latest();
+        return $this->hasOne('App\employment_history', 'survey_id','id')->orderBy('id','desc');
     }
 
     public function latestEducation()
     {
-        return $this->hasOne('App\education_history', 'survey_id','id')->latest();
+        return $this->hasOne('App\education_history', 'survey_id','id')->orderBy('id','desc');
     }
 
     public function education()
