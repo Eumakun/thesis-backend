@@ -35,6 +35,11 @@ class SurveyAnswerController extends Controller
                 "employment.jobType",
                 "latestEmployment"
             ])
+            ->whereHas('latestEmployment',function ( $subquery ) use($request){
+                $subquery->when(!empty($request['job_description']) , function ($query) use($request){
+                    return $query->where('job_description', 'like', '%' . $request['job_description']. '%');
+                });
+            })
             ->when(!empty($request['full_name']) , function ($query) use($request){
                 return $query->where('first_name','like', '%' . $request['full_name']. '%')
                     ->orWhere('middle_name', 'like', '%' . $request['full_name']. '%')
@@ -42,11 +47,6 @@ class SurveyAnswerController extends Controller
             })
             ->when(!empty($request['employment_status']) , function ($query) use($request){
                 return $query->where('employment_status', $request['employment_status']);
-            })
-            ->orWhereHas('latestEmployment',function ( $subquery ) use($request){
-                $subquery->when(!empty($request['job_description']) , function ($query) use($request){
-                    return $query->where('job_description', 'like', '%' . $request['job_description']. '%');
-                });
             })
             ->orderBy($request->sort_by != null ? $request->sort_by : 'created_at',$request->order != null ? $request->order : 'desc')
             ->paginate(intval($request->per_page));
@@ -59,6 +59,11 @@ class SurveyAnswerController extends Controller
                 "employment.jobType",
                 "latestEmployment"
             ])
+            ->whereHas('latestEmployment',function ( $subquery ) use($request){
+                $subquery->when(!empty($request['job_description']) , function ($query) use($request){
+                    return $query->where('job_description', 'like', '%' . $request['job_description']. '%');
+                });
+            })
             ->when(!empty($request['full_name']) , function ($query) use($request){
                 return $query->where('first_name',$request['full_name'])
                     ->orWhere('middle_name', 'like', '%' . $request['full_name']. '%')
@@ -66,11 +71,6 @@ class SurveyAnswerController extends Controller
             })
             ->when(!empty($request['employment_status']) , function ($query) use($request){
                 return $query->where('employment_status', $request['employment_status']);
-            })
-            ->orWhereHas('latestEmployment',function ( $subquery ) use($request){
-                $subquery->when(!empty($request['job_description']) , function ($query) use($request){
-                    return $query->where('job_description', 'like', '%' . $request['job_description']. '%');
-                });
             })
             ->orderBy($request->sort_by != null ? $request->sort_by : 'created_at',$request->order != null ? $request->order : 'desc')
             // ->whereHas("latestEmployment", function($q) use($request) {
