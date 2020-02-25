@@ -396,6 +396,7 @@ class SurveyAnswerController extends Controller
         $tier1 = 0;
         $tier2 = 0;
         $tier3 = 0;
+        $tier4 = 0;
         $unclassified = 0;
         foreach($tierlist as $key => $row) {
             if (Tier::where([
@@ -422,6 +423,14 @@ class SurveyAnswerController extends Controller
                   ])->exists() ) {  
                     $tier3++;
             } 
+            if (Tier::where([
+                'course_id' => $row->latestEducation->course_id,
+                 'job_id' => $row->latestEmployment->job_id,
+                  'industry_id' => $row->latestEmployment->industry_id,
+                  'tier_number' => 4
+                  ])->exists() ) {  
+                    $tier4++;
+            } 
         }
         $total = survey_answer::whereHas("latestEducation", function($q) use($request){
             $q->when(!empty($request['school_id']) , function ($query) use($request){
@@ -445,7 +454,8 @@ class SurveyAnswerController extends Controller
             'tier1' => $tier1,
             "tier2" => $tier2,
             "tier3" => $tier3,
-            "unclassified" => $total - ($tier1 + $tier2 + $tier3)
+            "tier4" => $tier4,
+            "unclassified" => $total - ($tier1 + $tier2 + $tier3 + $tier4)
         );
         return response()->json([
             'message' => "Successfully fetched dashboard data!",
