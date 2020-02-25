@@ -235,6 +235,8 @@ class SurveyAnswerController extends Controller
             // 'employment.*.date_employed' => 'required|date',
             // 'employment.*.date_resigned' => 'date',
         ]);
+        $educ = [];
+        $emp = [];
         foreach($request->education as $key => $input) {
             $data = array(
                 "survey_id" => $survey->id,
@@ -245,8 +247,11 @@ class SurveyAnswerController extends Controller
             $education_history = new education_history;
             if(isset($input["id"]) && education_history::find($input["id"]) != null) {
                 $education_history = education_history::find($input["id"]);
+                $educ[] = $input["id"];
             }
+            $education_history::where('survey_id',$survey->id)->whereNotIn('id', $educ)->delete();
             $education_history->fill($data)->save();
+
         }
         if(isset($request->employment)) {
             foreach($request->employment as $key => $input) {
@@ -261,7 +266,9 @@ class SurveyAnswerController extends Controller
                 $employment_history = new employment_history;
                 if(isset($input["id"]) && employment_history::find($input["id"]) != null) {
                     $employment_history = employment_history::find($input["id"]);
+                    $emp[] = $input["id"];
                 }
+                $employment_history::where('survey_id',$survey->id)->whereNotIn('id', $emp)->delete();
                 $employment_history->fill($data)->save();
             }
         }
