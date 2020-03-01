@@ -291,7 +291,11 @@ class SurveyAnswerController extends Controller
                 'message' => "No survey data was found!"
             ], 404);
         }
+        $employment_history = new employment_history;
+        $education_history = new education_history;
         $id = survey_answer::find( $data );
+        $employment_history::where('survey_id',$survey->id)->delete();
+        $education_history::where('survey_id',$survey->id)->delete();
         $id->delete();
         return response()->json([
             'message' => "Successfully deleted survey data!"
