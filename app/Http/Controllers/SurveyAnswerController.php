@@ -251,7 +251,6 @@ class SurveyAnswerController extends Controller
             }
             $education_history::where('survey_id',$survey->id)->whereNotIn('id', $educ)->delete();
             $education_history->fill($data)->save();
-
         }
         if(isset($request->employment)) {
             foreach($request->employment as $key => $input) {
@@ -294,8 +293,8 @@ class SurveyAnswerController extends Controller
         $employment_history = new employment_history;
         $education_history = new education_history;
         $id = survey_answer::find( $data );
-        $employment_history::where('survey_id',$survey->id)->delete();
-        $education_history::where('survey_id',$survey->id)->delete();
+        $employment_history::where('survey_id',$data)->delete();
+        $education_history::where('survey_id',$data)->delete();
         $id->delete();
         return response()->json([
             'message' => "Successfully deleted survey data!"
