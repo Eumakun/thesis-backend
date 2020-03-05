@@ -62,7 +62,6 @@ Route::group([
            Route::post('create', 'TierController@create');
            Route::post('update/{id}', 'TierController@update');
            Route::post('delete/{id}', 'TierController@delete');
-            Route::post('delete/{id}', 'TierController@delete');
         });
       Route::group([
             'prefix' => 'industries'
