@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class survey_answer extends Model
 {
@@ -15,6 +16,10 @@ class survey_answer extends Model
     protected $fillable = [
         'first_name','middle_name', 'last_name','address','age','employment_status','gender', 'birth_date'
     ];
+
+    public function setAgeAttribute($value) {
+        $this->attributes['age'] = Carbon::parse($this->attributes['birth_date'])->age;
+    }
 
     public function latestEmployment(){
         return $this->hasOne('App\employment_history', 'survey_id','id')->orderBy('id','desc');

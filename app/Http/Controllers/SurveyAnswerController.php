@@ -149,7 +149,7 @@ class SurveyAnswerController extends Controller
             'last_name' => 'required|string',
             'address' => 'required|string',
             'gender' => 'required|string',
-            'age' => 'required|numeric',
+            // 'age' => 'required|numeric',
             'birth_date' => 'required|date',
             'employment_status' => 'required|string',
             "education"    => "required|array|min:1",
@@ -222,7 +222,7 @@ class SurveyAnswerController extends Controller
             'last_name' => 'required|string',
             'address' => 'required|string',
             'employment_status' => 'required|string',
-            'age' => 'required|numeric',
+            // 'age' => 'required|numeric',
             "education"    => "required|array|min:1",
             'gender' => 'required|string',
             "employment"    => "array",
@@ -294,8 +294,8 @@ class SurveyAnswerController extends Controller
         $employment_history = new employment_history;
         $education_history = new education_history;
         $id = survey_answer::find( $data );
-        $employment_history::where('survey_id',$survey->id)->delete();
-        $education_history::where('survey_id',$survey->id)->delete();
+        $employment_history::where('survey_id',$data)->delete();
+        $education_history::where('survey_id',$data)->delete();
         $id->delete();
         return response()->json([
             'message' => "Successfully deleted survey data!"
@@ -490,8 +490,8 @@ class SurveyAnswerController extends Controller
         {
         
             if($key != 0) {
-                $course_id = course::where('name','like', '%' . $value[8] . '%')->first();
-                $school_id = school::where('name','like', '%' . $value[9] . '%')->first();
+                $course_id = course::where('name','like', '%' . $value[7] . '%')->first();
+                $school_id = school::where('name','like', '%' . $value[8] . '%')->first();
                 if($value[0] != null && 
                     $value[2] != null &&
                     $course_id != null &&
@@ -499,14 +499,13 @@ class SurveyAnswerController extends Controller
                      $value[3] != null && 
                       $value[4] != null &&
                       $value[5] != null &&
-                      $value[6] != null &&
-                      $value[7] != null) {
+                      $value[6] != null ) {
                 
                     $job_id = null;
                     $industry_id = null;
-                    if($value[11] != null && $value[12] != null) {
-                        $job_id = job_type::where('name','like', '%' . $value[11] . '%')->first();
-                        $industry_id = industry::where('name','like', '%' . $value[12] . '%')->first();
+                    if($value[10] != null && $value[11] != null) {
+                        $job_id = job_type::where('name','like', '%' . $value[10] . '%')->first();
+                        $industry_id = industry::where('name','like', '%' . $value[11] . '%')->first();
                     }
                     if(!$job_id && !$industry_id) {
                         $data[] = array (
@@ -515,14 +514,13 @@ class SurveyAnswerController extends Controller
                             'last_name' => $value[2],
                             'address' => $value[3],
                             'employment_status' => strtolower($value[4]),
-                            'age' => $value[5],
-                            'birth_date' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[6])),
-                            'gender' => strtolower($value[7]),
+                            'birth_date' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[5])),
+                            'gender' => strtolower($value[6]),
                             'education' => [
                                 array(
                                     'course_id' => $course_id->id,
                                     'school_id' => $school_id->id,
-                                    'date_graduated' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[10]))
+                                    'date_graduated' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[9]))
                                 )
                             ]
                         );
@@ -533,23 +531,22 @@ class SurveyAnswerController extends Controller
                             'last_name' => $value[2],
                             'address' => $value[3],
                             'employment_status' => strtolower($value[4]),
-                            'age' => $value[5],
-                            'birth_date' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[6])),
-                            'gender' => strtolower($value[7]),
+                            'birth_date' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[5])),
+                            'gender' => strtolower($value[6]),
                             'education' => [
                                 array(
                                     'course_id' => $course_id->id,
                                     'school_id' => $school_id->id,
-                                    'date_graduated' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[10]))
+                                    'date_graduated' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[9]))
                                 )
                             ],
                             'employment' => [
                                 array(
                                     'job_id' => $job_id->id,
                                     'industry_id' => $industry_id->id,
-                                    'job_description' => $value[13],
-                                    'date_employed' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[14])),
-                                    'date_resigned' => $value[15] != null ? Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[15])) : null
+                                    'job_description' => $value[12],
+                                    'date_employed' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[13])),
+                                    'date_resigned' => $value[15] != null ? Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value[14])) : null
                                 )
                             ],
                         );
