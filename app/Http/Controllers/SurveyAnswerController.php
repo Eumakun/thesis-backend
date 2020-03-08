@@ -251,7 +251,6 @@ class SurveyAnswerController extends Controller
             }
             $education_history::where('survey_id',$survey->id)->whereNotIn('id', $educ)->delete();
             $education_history->fill($data)->save();
-
         }
         if(isset($request->employment)) {
             foreach($request->employment as $key => $input) {
